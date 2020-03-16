@@ -27,7 +27,7 @@ module.exports = {
         options: [
             {
                 name: '--type [major|minor|patch]',
-                description: 'SemVer release type, optional if --skip-semver is true'
+                description: 'SemVer release type, optional if --skip-semver-for all is passed'
             },
             {
                 name: '--skip-semver-for [android|ios|all]',
