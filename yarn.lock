@@ -12,6 +12,13 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-13.9.1.tgz#96f606f8cd67fb018847d9b61e93997dabdefc72"
   integrity sha512-E6M6N0blf/jiZx8Q3nb0vNaswQeEyn0XlupO+xN6DtJ6r6IT4nXrTry7zhIfYvFCl3/8Cu6WIysmUBKiqV0bqQ==
 
+"@types/ramda@^0.27.0":
+  version "0.27.0"
+  resolved "https://registry.yarnpkg.com/@types/ramda/-/ramda-0.27.0.tgz#e6df564a5f9637c93e708b4fdb948c6a5457ecad"
+  integrity sha512-/Iw94cBUhU8RS6HvFs0WNrxLrOHS4VdCbaWWemrqaXM4GqNYdw/wtWQXk8nAjMj4YC4EXMumbYGO+D9yhACCLQ==
+  dependencies:
+    ts-toolbelt "^6.3.3"
+
 ansi-styles@^4.1.0:
   version "4.2.1"
   resolved "https://registry.yarnpkg.com/ansi-styles/-/ansi-styles-4.2.1.tgz#90ae75c424d008d2624c5bf29ead3177ebfcf359"
@@ -100,6 +107,11 @@ ts-node@8.6.2:
     make-error "^1.1.1"
     source-map-support "^0.5.6"
     yn "3.1.1"
+
+ts-toolbelt@^6.3.3:
+  version "6.3.6"
+  resolved "https://registry.yarnpkg.com/ts-toolbelt/-/ts-toolbelt-6.3.6.tgz#2bde29106c013ed520c32f30e1248daf8fd4f5f9"
+  integrity sha512-eVzym+LyQodOCfyVyQDQ6FGYbO2Xf9Nc4dGLRKlKSUpAs+8qQWHG+grDiA3ciEuNPNZ0qJnNIYkdqBW1rCWuUA==
 
 typescript@3.8.3:
   version "3.8.3"

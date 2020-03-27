@@ -1,8 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import chalk from 'chalk'
-// @ts-ignore
-import { pipe, match, split, curry, map, replace } from 'ramda'
+import { pipe, split, curry, map, replace } from 'ramda'
 
 export type SemVer = 'major' | 'minor' | 'patch'
 export type Platforms = 'android' | 'ios' | 'all'
@@ -26,7 +25,11 @@ const parseDecimal = (it: string) => parseInt(it, 10)
 
 const parseSemVer = pipe(split('.'), map(parseDecimal))
 
-const matchFirst = curry((reg: RegExp, value: string) => match(reg, value)[1])
+const matchFirst = curry((reg: RegExp, value: string) => {
+    const [, first] = ([] as string[]).concat(reg.exec(value)!)
+
+    return first
+})
 
 const incrementSemVer = (version: string, type: SemVer | undefined) => {
     const [major, minor, patch] = parseSemVer(version)
@@ -72,7 +75,7 @@ abstract class BaseFileManager {
 class PBXManager extends BaseFileManager {
     bumpProjectVersion() {
         const currentFile = this.read()
-        const codeRegex = /CURRENT_PROJECT_VERSION = (\d+);/
+        const codeRegex = /CURRENT_PROJECT_VERSION = (\d+);/g
         const currentCode = pipe(
             matchFirst(codeRegex),
             parseDecimal
@@ -93,7 +96,7 @@ class PBXManager extends BaseFileManager {
 
     setMarketingVersion(nextVersion: string) {
         const currentFile = this.read()
-        const versionRegex = /MARKETING_VERSION = (.*);/
+        const versionRegex = /MARKETING_VERSION = (.*);/g
         const currentVersion = matchFirst(versionRegex, currentFile)
 
         this.content = replace(
