@@ -1,4 +1,5 @@
 const { versioner } = require('./lib/index')
+const path = require('path')
 
 module.exports = {
     commands: [{
@@ -11,10 +12,16 @@ module.exports = {
                 return
             }
 
+            const appGradlePath = path.join(
+                config.project.android.sourceDir,
+                config.project.android.appName,
+                'build.gradle'
+            )
+
             versioner({
                 root: config.root,
                 pbxprojPath: config.project.ios.pbxprojPath,
-                buildGradlePath: config.project.android.buildGradlePath,
+                buildGradlePath: appGradlePath,
                 type: args.type,
                 skipCodeFor: args.skipCodeFor
                     ? args.skipCodeFor.split(' ')
