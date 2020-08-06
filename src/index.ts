@@ -136,12 +136,13 @@ class BuildGradleManager extends BaseFileManager {
         const nameExp = /versionName ('.*'|".*")/
 
         const current = matchFirst(nameExp, currentFile)
+        const newVersionName = current.replace(quotes, next)
 
         this.content = currentFile.replace(
           nameExp,
           // Here we try to prevent quotes style...
           // which may be unnecessary, but who knows?
-          current.replace(quotes, next)
+          `versionName ${newVersionName}`
         )
 
         return { current, next }
