@@ -10,7 +10,6 @@ type Configs = {
     type?: SemVer
     skipSemVerFor: Platforms[]
     skipCodeFor: Platforms[]
-    ignoreGitCheck?: boolean
     root: string
     pbxprojPath: string
     buildGradlePath: string
@@ -192,10 +191,10 @@ class PackageJSONManager {
 }
 
 export class ProjectFilesManager {
-    private readonly configs: Configs
-    private readonly pbx: PBXManager
-    private readonly buildGradle: BuildGradleManager
-    private readonly packageJSON: PackageJSONManager
+    readonly configs: Configs
+    readonly pbx: PBXManager
+    readonly buildGradle: BuildGradleManager
+    readonly packageJSON: PackageJSONManager
 
     constructor(configs: Configs) {
         const {
@@ -260,7 +259,19 @@ export class ProjectFilesManager {
 
     }
 
-    exec() {
+    run() {
+        this.dryRun()
+        this.pbx.write()
+        this.buildGradle.write()
+        this.packageJSON.write()
+    }
+
+    /**
+     * Separated for testing
+     *
+     * This executes changes but don't actually write anything to fs
+     */
+    dryRun() {
         const { type, skipSemVerFor, skipCodeFor } = this.configs
         const current = this.packageJSON.getVersion()
         const next = incrementSemVer(current, type ?? 'minor')
@@ -277,12 +288,10 @@ export class ProjectFilesManager {
             this.syncSemver(next)
         }
 
-        this.pbx.write()
-        this.buildGradle.write()
-        this.packageJSON.write()
+        return this;
     }
 }
 
 export const versioner = (configs: Configs) => {
-    new ProjectFilesManager(configs).exec()
+    new ProjectFilesManager(configs).run()
 }

@@ -5,8 +5,9 @@
   "types": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
+    "test": "jest",
     "build": "tsc",
-    "prepare": "rm -rf ./lib/* && yarn build"
+    "prepare": "rm -rf ./lib/* && yarn build && yarn test"
   },
   "dependencies": {
     "chalk": "3.0.0",
@@ -15,6 +16,7 @@
   "devDependencies": {
     "@types/node": "^13.9.1",
     "@types/ramda": "^0.27.0",
+    "jest": "^26.2.2",
     "ts-node": "8.6.2",
     "typescript": "3.8.3"
   }
