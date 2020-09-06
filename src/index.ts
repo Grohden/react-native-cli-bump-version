@@ -8,6 +8,7 @@ export type Platforms = 'android' | 'ios' | 'all'
 
 type Configs = {
     type?: SemVer
+    version: string
     skipSemVerFor: Platforms[]
     skipCodeFor: Platforms[]
     root: string
@@ -30,8 +31,12 @@ const matchFirst = curry((reg: RegExp, value: string) => {
     return first
 })
 
-const incrementSemVer = (version: string, type: SemVer | undefined) => {
-    const [major, minor, patch] = parseSemVer(version)
+const incrementSemVer = (current: string, version: string | null, type: SemVer | undefined) => {
+    const [major, minor, patch] = parseSemVer(current)
+    
+    if(version) {
+        return version
+    }    
 
     if (type === 'major') {
         return [major + 1, 0, 0].join('.')
@@ -272,9 +277,9 @@ export class ProjectFilesManager {
      * This executes changes but don't actually write anything to fs
      */
     dryRun() {
-        const { type, skipSemVerFor, skipCodeFor } = this.configs
+        const { type, version, skipSemVerFor, skipCodeFor } = this.configs
         const current = this.packageJSON.getVersion()
-        const next = incrementSemVer(current, type ?? 'minor')
+        const next = incrementSemVer(current, version, type ?? 'minor')
 
         if (!skipCodeFor.includes('all')) {
             this.bumpCodes()
