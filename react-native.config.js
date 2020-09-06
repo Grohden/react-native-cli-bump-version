@@ -23,6 +23,7 @@ module.exports = {
                 pbxprojPath: config.project.ios.pbxprojPath,
                 buildGradlePath: appGradlePath,
                 type: args.type,
+                version: args.version,
                 skipCodeFor: args.skipCodeFor
                     ? args.skipCodeFor.split(' ')
                     : [],
@@ -35,6 +36,10 @@ module.exports = {
             {
                 name: '--type [major|minor|patch]',
                 description: 'SemVer release type, optional if --skip-semver-for all is passed'
+            },
+            {
+                name: '--version [String]',
+                description: 'Pass release version if known. Overwrites calculated SemVer. Optional.'
             },
             {
                 name: '--skip-semver-for [android|ios|all]',
