@@ -39,6 +39,7 @@ Options:
   --type [major|minor|patch]           SemVer release type, optional if --skip-semver-for all is passed
   --skip-semver-for [android|ios|all]  Skips bump SemVer for specified platform
   --skip-code-for [android|ios|all]    Skips bump version codes for specified platform
+  --version                            Pass release version if known. Overwrites calculated SemVer. Optional.
   -h, --help                           output usage information
 ```
 
