@@ -4,40 +4,34 @@ const { ProjectFilesManager } = require('../lib/index')
 const makeDefaultManager = ({
     version,
     type = 'minor',
-    skipSemVerFor = 'ios',
-    skipCodeFor = 'ios',
-    gradleFileName = 'double.gradle'
+    skipSemVerFor = 'android',
+    skipCodeFor = 'android',
+    pbxFileName = 'project.pbxproj'
 } = {}) => new ProjectFilesManager({
     type,
     version,
     skipSemVerFor,
     skipCodeFor,
-    root: path.join(__dirname, 'android'),
-    buildGradlePath: path.join(__dirname, 'android', gradleFileName)
+    root: path.join(__dirname, 'ios'),
+    pbxprojPath: path.join(__dirname, 'ios', pbxFileName)
 })
 
 test('successfully bump version', () => {
     const manager = makeDefaultManager().dryRun()
 
-    expect(manager.buildGradle.content).toMatchSnapshot()
+    expect(manager.pbx.content).toMatchSnapshot()
 })
 
 
 test('skip semVer when asked', () => {
     const manager = makeDefaultManager({ skipSemVerFor: 'all' }).dryRun()
 
-    expect(manager.buildGradle.content).toMatchSnapshot()
-})
-
-test('preserve quotes style', () => {
-    const manager = makeDefaultManager({ gradleFileName: 'single.gradle' }).dryRun()
-
-    expect(manager.buildGradle.content).toMatchSnapshot()
+    expect(manager.pbx.content).toMatchSnapshot()
 })
 
 test('direct set semver string', () => {
     const manager = makeDefaultManager({ version: '1.1.2' }).dryRun()
 
-    expect(manager.buildGradle.content).toMatchSnapshot()
+    expect(manager.pbx.content).toMatchSnapshot()
     expect(manager.packageJSON.content).toMatchSnapshot()
 })
