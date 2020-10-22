@@ -2,14 +2,14 @@ const path = require('path')
 const { ProjectFilesManager } = require('../lib/index')
 
 const makeDefaultManager = ({
-    version,
+    semver,
     type = 'minor',
     skipSemVerFor = 'android',
     skipCodeFor = 'android',
     pbxFileName = 'project.pbxproj'
 } = {}) => new ProjectFilesManager({
     type,
-    version,
+    semver,
     skipSemVerFor,
     skipCodeFor,
     root: path.join(__dirname, 'ios'),
@@ -30,7 +30,7 @@ test('skip semVer when asked', () => {
 })
 
 test('direct set semver string', () => {
-    const manager = makeDefaultManager({ version: '1.1.2' }).dryRun()
+    const manager = makeDefaultManager({ semver: '1.1.2' }).dryRun()
 
     expect(manager.pbx.content).toMatchSnapshot()
     expect(manager.packageJSON.content).toMatchSnapshot()

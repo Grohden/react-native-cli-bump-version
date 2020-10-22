@@ -8,7 +8,7 @@ export type Platforms = 'android' | 'ios' | 'all'
 
 type Configs = {
     type?: SemVer
-    version?: string
+    semver?: string
     skipSemVerFor: Platforms[]
     skipCodeFor: Platforms[]
     root: string
@@ -273,9 +273,9 @@ export class ProjectFilesManager {
      * This executes changes but don't actually write anything to fs
      */
     dryRun() {
-        const { type, version, skipSemVerFor, skipCodeFor } = this.configs
+        const { type, semver, skipSemVerFor, skipCodeFor } = this.configs
         const current = this.packageJSON.getVersion()
-        const next = version ?? incrementSemVer(current, type ?? 'minor')
+        const next = semver ?? incrementSemVer(current, type ?? 'minor')
 
         if (!skipCodeFor.includes('all')) {
             this.bumpCodes()

@@ -5,7 +5,6 @@ module.exports = {
     commands: [{
         name: 'bump-version',
         func: (_, config, args) => {
-
             if (args.skipCodeFor === 'all' && args.skipSemverFor === 'all') {
                 // https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png
                 console.log('My work here is done.')
@@ -23,7 +22,7 @@ module.exports = {
                 pbxprojPath: config.project.ios.pbxprojPath,
                 buildGradlePath: appGradlePath,
                 type: args.type,
-                version: args.version,
+                semver: args.semver,
                 skipCodeFor: args.skipCodeFor
                     ? args.skipCodeFor.split(' ')
                     : [],
@@ -38,7 +37,7 @@ module.exports = {
                 description: 'SemVer release type, optional if --skip-semver-for all is passed'
             },
             {
-                name: '--version [String]',
+                name: '--semver [String]',
                 description: 'Pass release version if known. Overwrites calculated SemVer. Optional.'
             },
             {

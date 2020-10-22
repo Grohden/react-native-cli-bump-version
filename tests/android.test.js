@@ -2,14 +2,14 @@ const path = require('path')
 const { ProjectFilesManager } = require('../lib/index')
 
 const makeDefaultManager = ({
-    version,
+    semver,
     type = 'minor',
     skipSemVerFor = 'ios',
     skipCodeFor = 'ios',
     gradleFileName = 'double.gradle'
 } = {}) => new ProjectFilesManager({
     type,
-    version,
+    semver,
     skipSemVerFor,
     skipCodeFor,
     root: path.join(__dirname, 'android'),
@@ -36,7 +36,7 @@ test('preserve quotes style', () => {
 })
 
 test('direct set semver string', () => {
-    const manager = makeDefaultManager({ version: '1.1.2' }).dryRun()
+    const manager = makeDefaultManager({ semver: '1.1.2' }).dryRun()
 
     expect(manager.buildGradle.content).toMatchSnapshot()
     expect(manager.packageJSON.content).toMatchSnapshot()
