@@ -28,6 +28,20 @@ package.json: 1.10.6 -> 1.10.7
 The plugin updates and write the output listed files, and it's up to you to
 commit them.
 
+
+Tip: I usually create a script entry for the command, since it tends to be long:
+
+```json
+{
+    "scripts": {
+        "bump": "npx react-native bump-version --skip-semver-for android"
+    }
+}
+```
+
+That way you can invoke it like: `yarn bump --type patch`
+
+
 ## Flags
 
 Just ask for help:
@@ -77,7 +91,7 @@ will break.
 
 #### Use MARKETING_VERSION in `Info.plist`
 
-I've choose to remove the `Info.plist` manipulation as it was not needed
+I've choosen to remove the `Info.plist` manipulation as it was not needed
 if it uses the `MARKETING_VERSION` env var, so be sure that your project/xcode is updated and that
 the `Info.plist` file has `MARKETING_VERSION` instead of SemVer string:
 
@@ -90,6 +104,6 @@ the `Info.plist` file has `MARKETING_VERSION` instead of SemVer string:
 
 I tried to find a tool that did this before starting it:
  
- * [rnbv](https://github.com/llotheo/react-native-cli-bump-version) inspired my initial sources
+ * [rnbv](https://github.com/llotheo/react-native-bump-version) inspired my initial sources
  * [react-native-version](https://github.com/stovmascript/react-native-version) actually does what I was
  looking for, but I already had written the tool, so I just published it anyway. 
