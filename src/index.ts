@@ -191,11 +191,70 @@ class PackageJSONManager {
     }
 }
 
+
+class AppJSONManager {
+    private readonly basePath: string
+    private content: {
+        expo: {
+            version: string
+        }
+    } | null = null
+
+    constructor(basePath: string) {
+        this.basePath = basePath
+    }
+
+    private read() {
+        if (this.content === null) {
+            try {
+                this.content = require(this.basePath)
+                console.log(info(`Expo app.json detected, app.json will be updated.`)
+            } catch(e) {
+                console.log(`Could not load expo app.json, skiping it ${(e?.message)}`)
+            }
+        }
+
+        return this.content!
+    }
+
+    write() {
+        if (this.content) {
+            return writeFile(
+                this.basePath,
+                JSON.stringify(this.content, null, 2)
+            )
+        }
+    }
+
+    getVersion() {
+        return this.read()?.expo?.version
+    }
+
+    setVersion(next: string) {
+        const current = this.getVersion()
+        if(this.content) {
+            this.content = {
+                ...this.content,
+                expo: {
+                    ...this.content?.expo,
+                    version: next
+                }
+            }
+        }
+
+        return {
+            next,
+            current
+        }
+    }
+}
+
 export class ProjectFilesManager {
     readonly configs: Configs
     readonly pbx: PBXManager
     readonly buildGradle: BuildGradleManager
     readonly packageJSON: PackageJSONManager
+    readonly appJSON: AppJSONManager
 
     constructor(configs: Configs) {
         const {
@@ -210,6 +269,10 @@ export class ProjectFilesManager {
         this.packageJSON = new PackageJSONManager(path.join(
             root,
             'package.json'
+        ))
+        this.appJSON = new AppJSONManager(path.join(
+            root,
+            'app.json'
         ))
     }
 
@@ -237,6 +300,13 @@ export class ProjectFilesManager {
             current: packageCurrent
         } = this.packageJSON.setVersion(semverString)
         console.log(success(`package.json: ${ packageCurrent } -> ${ packageNext }`))
+
+        const {
+            next: appNext,
+            current: appCurrent
+        } = this.appJSON.setVersion(semverString)
+        appCurrent && console.log(success(`app.json: ${ appCurrent } -> ${ appNext }`))
+
     }
 
     bumpCodes() {
@@ -265,6 +335,7 @@ export class ProjectFilesManager {
         this.pbx.write()
         this.buildGradle.write()
         this.packageJSON.write()
+        this.appJSON.write()
     }
 
     /**
