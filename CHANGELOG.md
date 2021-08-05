@@ -1,3 +1,10 @@
+# 1.3.0
+
+Reverted the changes from 1.2.0, it seems that RN cli is somehow unstable with its
+params for plugins
+
+This should fix the build gradle not being found properly again
+
 # 1.2.0
 
 Made the cli prefer using the `buildGradlePath` from RN cli, this probably doesn't 

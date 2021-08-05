@@ -11,7 +11,7 @@ module.exports = {
                 return
             }
 
-            const appGradlePath = config.project.android.buildGradlePath || path.join(
+            const appGradlePath = path.join(
                 config.project.android.sourceDir,
                 config.project.android.appName,
                 'build.gradle'
