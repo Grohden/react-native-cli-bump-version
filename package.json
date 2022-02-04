@@ -1,23 +1,20 @@
 {
   "name": "react-native-cli-bump-version",
-  "version": "1.3.0",
+  "version": "1.4.0",
   "main": "src/index.ts",
   "types": "lib/index.d.ts",
   "license": "MIT",
   "scripts": {
+    "fmt": "dprint fmt",
     "test": "yarn build && jest",
     "build": "tsc",
     "prepare": "rm -rf ./lib/* && yarn test"
   },
-  "dependencies": {
-    "chalk": "3.0.0",
-    "ramda": "0.27.0"
-  },
   "devDependencies": {
-    "@types/node": "^13.9.1",
-    "@types/ramda": "^0.27.0",
-    "jest": "^26.2.2",
-    "ts-node": "8.6.2",
-    "typescript": "3.8.3"
+    "@types/node": "^17.0.14",
+    "dprint": "^0.22.0",
+    "jest": "^27.4.7",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.5"
   }
 }
