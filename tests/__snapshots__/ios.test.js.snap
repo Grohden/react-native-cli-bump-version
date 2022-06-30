@@ -60,6 +60,33 @@ exports[`skip semVer when asked 1`] = `
 "
 `;
 
+exports[`successfully bump version (pre 0.69.x) 1`] = `
+"// !$*UTF8*$!
+{
+	objects = {
+/* Begin XCBuildConfiguration section */
+		13B07F941A680F5B01A75B9A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MARKETING_VERSION = 1.1.0;
+				CURRENT_PROJECT_VERSION = 32;
+			};
+			name = Debug;
+		};
+		13B07F951A680F5B01A75B9A /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				MARKETING_VERSION = 1.1.0;
+				CURRENT_PROJECT_VERSION = 32;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+	};
+}
+"
+`;
+
 exports[`successfully bump version 1`] = `
 "// !$*UTF8*$!
 {

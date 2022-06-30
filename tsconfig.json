@@ -5,7 +5,7 @@
     "esModuleInterop": true,
     "module": "CommonJS",
     "target": "ES2016",
-    "declaration": false,
+    "declaration": true,
     "strict": true
   },
   "include": [

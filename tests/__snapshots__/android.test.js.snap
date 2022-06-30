@@ -20,7 +20,7 @@ exports[`preserve quotes style 1`] = `
 "android {
     defaultConfig {
         versionCode 2
-        versionName '1.2.0'
+        versionName '1.1.0'
     }
 }
 "

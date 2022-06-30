@@ -1,20 +1,26 @@
 const path = require("path");
-const { ProjectFilesManager } = require("../lib/index");
+const { versioner } = require("../lib/index");
 
 const makeDefaultManager = ({
     semver,
     type = "minor",
-    skipSemVerFor = "ios",
+    skipSemverFor = "ios",
     skipCodeFor = "ios",
-    gradleFileName = "double.gradle",
+    appName = "double",
 } = {}) =>
-    new ProjectFilesManager({
+    versioner({
+        root: path.join(__dirname, "android"),
+        project: {
+            android: {
+                appName: appName,
+                sourceDir: path.join(__dirname, "android"),
+            },
+        },
+    }, {
         type,
         semver,
-        skipSemVerFor,
+        skipSemverFor,
         skipCodeFor,
-        root: path.join(__dirname, "android"),
-        buildGradlePath: path.join(__dirname, "android", gradleFileName),
     });
 
 test("successfully bump version", () => {
@@ -24,13 +30,13 @@ test("successfully bump version", () => {
 });
 
 test("skip semVer when asked", () => {
-    const manager = makeDefaultManager({ skipSemVerFor: "all" }).dryRun();
+    const manager = makeDefaultManager({ skipSemverFor: "all" }).dryRun();
 
     expect(manager.buildGradle.content).toMatchSnapshot();
 });
 
 test("preserve quotes style", () => {
-    const manager = makeDefaultManager({ gradleFileName: "single.gradle" }).dryRun();
+    const manager = makeDefaultManager({ appName: "single" }).dryRun();
 
     expect(manager.buildGradle.content).toMatchSnapshot();
 });

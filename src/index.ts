@@ -13,8 +13,8 @@ type Configs = {
     skipSemVerFor: Platforms[];
     skipCodeFor: Platforms[];
     root: string;
-    pbxprojPath: string;
-    buildGradlePath: string;
+    pbxprojPath: () => string;
+    buildGradlePath: () => string;
 };
 
 // -- FP
@@ -30,7 +30,7 @@ const pipe2 = <A1, A2, R>(
 
 const replace = (expr: string | RegExp, replacement: string, str: string) => {
     return str.replace(expr, replacement);
-}
+};
 
 // -- Specializations
 
@@ -42,11 +42,12 @@ const writeFile = (fPath: string, file: string) => {
     fs.writeFileSync(fPath, file, "utf8");
 };
 
-const matchFirst = (reg: RegExp) => (value: string) => {
-    const [, first] = ([] as string[]).concat(reg.exec(value)!);
+const matchFirst = (reg: RegExp) =>
+    (value: string) => {
+        const [, first] = ([] as string[]).concat(reg.exec(value)!);
 
-    return first;
-}
+        return first;
+    };
 
 const incrementSemVer = (current: string, type: SemVer | undefined) => {
     const [major, minor, patch] = parseSemVer(current);
@@ -66,20 +67,19 @@ const incrementSemVer = (current: string, type: SemVer | undefined) => {
     throw new Error(`'${type}' is not a semver type`);
 };
 
-
 // -- Managers
 
 abstract class BaseFileManager {
-    private readonly basePath: string;
+    private readonly basePath: () => string;
     protected content: string | null = null;
 
-    constructor(basePath: string) {
+    constructor(basePath: () => string) {
         this.basePath = basePath;
     }
 
     protected read() {
         if (this.content === null) {
-            this.content = fs.readFileSync(this.basePath, "utf8");
+            this.content = fs.readFileSync(this.basePath(), "utf8");
         }
 
         return this.content;
@@ -87,7 +87,7 @@ abstract class BaseFileManager {
 
     write() {
         if (this.content) {
-            return writeFile(this.basePath, this.content);
+            return writeFile(this.basePath(), this.content);
         }
     }
 }
@@ -170,18 +170,24 @@ class BuildGradleManager extends BaseFileManager {
 }
 
 class PackageJSONManager {
-    private readonly basePath: string;
-    private content: {
+    private readonly basePath: () => string;
+    public content: {
         version: string;
     } | null = null;
 
-    constructor(basePath: string) {
+    constructor(basePath: () => string) {
         this.basePath = basePath;
     }
 
     private read() {
         if (this.content === null) {
-            this.content = require(this.basePath);
+            // Avoid direct require as it caches
+            // resolved modules and changes to them
+            // are going to be persisted in the same process
+            const raw = fs.readFileSync(require.resolve(this.basePath()), {
+                encoding: "utf8",
+            });
+            this.content = JSON.parse(raw);
         }
 
         return this.content!;
@@ -190,7 +196,7 @@ class PackageJSONManager {
     write() {
         if (this.content) {
             return writeFile(
-                this.basePath,
+                this.basePath(),
                 JSON.stringify(this.content, null, 2),
             );
         }
@@ -208,26 +214,24 @@ class PackageJSONManager {
     }
 }
 
-export class ProjectFilesManager {
+class ProjectFilesManager {
     readonly configs: Configs;
     readonly pbx: PBXManager;
     readonly buildGradle: BuildGradleManager;
     readonly packageJSON: PackageJSONManager;
 
     constructor(configs: Configs) {
-        const {
-            root,
-            pbxprojPath,
-            buildGradlePath,
-        } = configs;
+        const { root, pbxprojPath, buildGradlePath } = configs;
 
         this.configs = configs;
         this.buildGradle = new BuildGradleManager(buildGradlePath);
         this.pbx = new PBXManager(pbxprojPath);
-        this.packageJSON = new PackageJSONManager(path.join(
-            root,
-            "package.json",
-        ));
+        this.packageJSON = new PackageJSONManager(() =>
+            path.join(
+                root,
+                "package.json",
+            )
+        );
     }
 
     syncSemver(semverString: string) {
@@ -309,6 +313,82 @@ export class ProjectFilesManager {
     }
 }
 
-export const versioner = (configs: Configs) => {
-    new ProjectFilesManager(configs).run();
+// if you want a simple version to use as api
+export const apiVersioner = (configs: Configs) => {
+    return new ProjectFilesManager(configs);
+};
+
+export const versioner = (
+    cliConfigs: {
+        root?: string;
+        project?: {
+            ios?: {
+                sourceDir?: string;
+                pbxprojPath?: string;
+                xcodeProject?: {
+                    name: string;
+                };
+            };
+            android?: {
+                sourceDir?: string;
+                appName?: string;
+            };
+        };
+    },
+    cliArgs: {
+        skipCodeFor?: string;
+        skipSemverFor?: string;
+        semver?: string;
+        type?: string;
+    },
+) => {
+    if (cliArgs.skipCodeFor === "all" && cliArgs.skipSemverFor === "all") {
+        // https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png
+        console.log("My work here is done.");
+        return;
+    }
+
+    const required = <T>(value: T, name: string): NonNullable<T> => {
+        if (!value) {
+            throw new Error(
+                `Value for ${name} is '${value}', maybe RN cli broke compatibility?`,
+            );
+        }
+
+        return value!;
+    };
+
+    return apiVersioner({
+        root: required(cliConfigs.root, "root"),
+        pbxprojPath: () => {
+            const iosProject = required(cliConfigs?.project?.ios, "project.ios");
+
+            return iosProject.pbxprojPath || path.join(
+                required(iosProject.sourceDir, "project.ios.sourceDir"),
+                required(iosProject.xcodeProject, "project.ios.xcodeProject")
+                    .name
+                    .replace(".xcworkspace", ".xcodeproj"),
+                "project.pbxproj",
+            );
+        },
+        buildGradlePath: () => {
+            const androidProject = required(cliConfigs?.project?.android, "project.android");
+
+            return path.join(
+                required(androidProject.sourceDir, "project.android.sourceDir"),
+                required(androidProject.appName, "project.android.appName"),
+                "build.gradle",
+            );
+        },
+        // code validates these casts, we cast to make api above allow only valid values
+        // for type checked usages
+        type: cliArgs.type as SemVer,
+        semver: cliArgs.semver,
+        skipCodeFor: cliArgs.skipCodeFor
+            ? cliArgs.skipCodeFor.split(" ") as Platforms[]
+            : [],
+        skipSemVerFor: cliArgs.skipSemverFor
+            ? cliArgs.skipSemverFor.split(" ") as Platforms[]
+            : [],
+    });
 };

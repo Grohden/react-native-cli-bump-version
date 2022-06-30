@@ -1,21 +1,38 @@
 const path = require("path");
-const { ProjectFilesManager } = require("../lib/index");
+const { versioner } = require("../lib/index");
 
 const makeDefaultManager = ({
     semver,
     type = "minor",
-    skipSemVerFor = "android",
+    skipSemverFor = "android",
     skipCodeFor = "android",
-    pbxFileName = "project.pbxproj",
+    pbxFileName,
 } = {}) =>
-    new ProjectFilesManager({
+    versioner({
+        root: path.join(__dirname, "ios"),
+        project: {
+            ios: {
+                sourceDir: path.join(__dirname, "ios"),
+                xcodeProject: { name: "App.xcworkspace" },
+                pbxprojPath: pbxFileName
+                    ? path.join(__dirname, "ios", "App.xcodeproj", pbxFileName)
+                    : undefined,
+            },
+        },
+    }, {
         type,
         semver,
-        skipSemVerFor,
+        skipSemverFor,
         skipCodeFor,
-        root: path.join(__dirname, "ios"),
-        pbxprojPath: path.join(__dirname, "ios", pbxFileName),
     });
+
+test("successfully bump version (pre 0.69.x)", () => {
+    const manager = makeDefaultManager({
+        pbxFileName: "project.pbxproj",
+    }).dryRun();
+
+    expect(manager.pbx.content).toMatchSnapshot();
+});
 
 test("successfully bump version", () => {
     const manager = makeDefaultManager().dryRun();
@@ -24,7 +41,7 @@ test("successfully bump version", () => {
 });
 
 test("skip semVer when asked", () => {
-    const manager = makeDefaultManager({ skipSemVerFor: "all" }).dryRun();
+    const manager = makeDefaultManager({ skipSemverFor: "all" }).dryRun();
 
     expect(manager.pbx.content).toMatchSnapshot();
 });
