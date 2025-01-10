@@ -5,12 +5,16 @@ module.exports = {
     commands: [{
         name: "bump-version",
         func: (_, config, args) => {
-            versioner(config, args).run();
+            const result = versioner(config, args);
+
+            if(result) {
+                result.run();
+            }
         },
         options: [
             {
                 name: "--type [major|minor|patch]",
-                description: "SemVer release type, optional if --skip-semver-for all is passed",
+                description: "SemVer release type, optional if --skip-semver-for all is passed, ignored (and optional) when --semver is passed",
             },
             {
                 name: "--semver [String]",
