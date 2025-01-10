@@ -33,6 +33,14 @@ Object {
 }
 `;
 
+exports[`direct set semver string and ignores non defined type 1`] = `null`;
+
+exports[`direct set semver string and ignores non defined type 2`] = `
+Object {
+  "version": "1.1.2",
+}
+`;
+
 exports[`skip semVer when asked 1`] = `
 "// !$*UTF8*$!
 {

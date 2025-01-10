@@ -6,7 +6,8 @@
     "module": "CommonJS",
     "target": "ES2016",
     "declaration": true,
-    "strict": true
+    "strict": true,
+    "strictNullChecks": true
   },
   "include": [
     "./src/*"
