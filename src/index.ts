@@ -342,9 +342,9 @@ export const versioner = (
         type?: string;
     },
 ) => {
+    // https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png
     if (cliArgs.skipCodeFor === "all" && cliArgs.skipSemverFor === "all") {
-        // https://i.kym-cdn.com/photos/images/newsfeed/001/240/075/90f.png
-        console.log("My work here is done.");
+        console.log("All bumps skipped due to skip flags.");
         return;
     }
 
