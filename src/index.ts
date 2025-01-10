@@ -302,8 +302,8 @@ class ProjectFilesManager {
         }
 
         if (!skipSemVerFor.includes("all")) {
-            if (!type) {
-                throw new Error("SemVer type not specified");
+            if (!type && !semver) {
+                throw new Error("bump type and semver value not specified");
             }
 
             this.syncSemver(next);

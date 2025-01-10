@@ -7,14 +7,15 @@ module.exports = {
         func: (_, config, args) => {
             const result = versioner(config, args);
 
-            if(result) {
+            if (result) {
                 result.run();
             }
         },
         options: [
             {
                 name: "--type [major|minor|patch]",
-                description: "SemVer release type, optional if --skip-semver-for all is passed, ignored (and optional) when --semver is passed",
+                description:
+                    "SemVer release type, optional if --skip-semver-for all is passed, ignored (and optional) when --semver is passed",
             },
             {
                 name: "--semver [String]",

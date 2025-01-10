@@ -50,7 +50,7 @@ Just ask for help:
 npx react-native bump-version --help
 
 Options:
-  --type [major|minor|patch]           SemVer release type, optional if --skip-semver-for all is passed
+  --type [major|minor|patch]           SemVer release type, optional if --skip-semver-for all is passed, ignored (and optional) when --semver is passed
   --skip-semver-for [android|ios|all]  Skips bump SemVer for specified platform
   --skip-code-for [android|ios|all]    Skips bump version codes for specified platform
   --semver                             Pass release version if known. Overwrites calculated SemVer. Optional.

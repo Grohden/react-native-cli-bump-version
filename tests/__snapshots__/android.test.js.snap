@@ -16,6 +16,22 @@ Object {
 }
 `;
 
+exports[`direct set semver string and ignores non defined type 1`] = `
+"android {
+    defaultConfig {
+        versionCode 2
+        versionName \\"1.1.2\\"
+    }
+}
+"
+`;
+
+exports[`direct set semver string and ignores non defined type 2`] = `
+Object {
+  "version": "1.1.2",
+}
+`;
+
 exports[`preserve quotes style 1`] = `
 "android {
     defaultConfig {

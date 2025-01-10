@@ -47,3 +47,10 @@ test("direct set semver string", () => {
     expect(manager.buildGradle.content).toMatchSnapshot();
     expect(manager.packageJSON.content).toMatchSnapshot();
 });
+
+test("direct set semver string and ignores non defined type", () => {
+    const manager = makeDefaultManager({ semver: "1.1.2", type: null }).dryRun();
+
+    expect(manager.buildGradle.content).toMatchSnapshot();
+    expect(manager.packageJSON.content).toMatchSnapshot();
+});
